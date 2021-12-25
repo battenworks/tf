@@ -1,0 +1,17 @@
+{
+	"folders": [
+		{
+			"path": "common/console"
+		},
+		{
+			"path": "common/command"
+		},
+		{
+			"path": "app/tf"
+		},
+		{
+			"path": "app/dc"
+		}
+	],
+	"settings": {}
+}
