@@ -1,6 +1,6 @@
 module tf
 
-go 1.14
+go 1.17
 
 require command v0.0.0
 

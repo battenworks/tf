@@ -1,6 +1,6 @@
 module command
 
-go 1.14
+go 1.17
 
 require console v0.0.0
 

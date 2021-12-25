@@ -1,13 +1,11 @@
 package main
 
 import (
-	"bufio"
 	"command"
 	"console"
 	"errors"
 	"fmt"
 	"os"
-	"regexp"
 )
 
 func cleanScope(scope string, workspace string) error {
