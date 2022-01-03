@@ -20,7 +20,7 @@ func cleanScope(scope string, workspace string) error {
 	console.White(workspace + "\n")
 
 	fmt.Println("removing .terraform directory")
-	err = cleanTerraformCacheDirectory(workingDir)
+	err = cleanTerraformCache(workingDir)
 	if err != nil {
 		return err
 	}
@@ -56,8 +56,13 @@ func validateWorkingDirectory(dir string) (string, error) {
 	return dir, nil
 }
 
-func cleanTerraformCacheDirectory(dir string) error {
+func cleanTerraformCache(dir string) error {
 	err := os.RemoveAll(dir + "/.terraform")
+	if err != nil {
+		return err
+	}
+
+	err = os.Remove(dir + "/.terraform.lock.hcl")
 	if err != nil {
 		return err
 	}
