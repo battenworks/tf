@@ -27,7 +27,7 @@ func main() {
 		case "help", "-help", "--help":
 			usage()
 		default:
-			console.Yellow("unrecognized command: " + command)
+			console.Yellow("unrecognized command: " + command + "\n")
 		}
 	} else {
 		usage()
@@ -36,6 +36,8 @@ func main() {
 
 func usage() {
 	console.White("Usage: tf COMMAND [args]\n\n")
+	console.White("commands:\n")
+	console.White("  clean - wipes terraform cache from current scope, and re-inits terraform\n")
 	console.White("args:\n")
 	console.White("  -workspace=<workspace to select after initialization>\n")
 }
