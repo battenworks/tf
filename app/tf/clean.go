@@ -62,9 +62,13 @@ func cleanTerraformCache(dir string) error {
 		return err
 	}
 
-	err = os.Remove(dir + "/.terraform.lock.hcl")
-	if err != nil {
-		return err
+	if _, err := os.Stat(dir + "/.terraform.lock.hcl"); errors.Is(err, os.ErrNotExist) {
+		return nil
+	} else {
+		err = os.Remove(dir + "/.terraform.lock.hcl")
+		if err != nil {
+			return err
+		}
 	}
 
 	return nil
