@@ -27,7 +27,11 @@ func main() {
 		case "help", "-help", "--help":
 			usage()
 		default:
-			console.Yellow("unrecognized command: " + command + "\n")
+			err := passThrough(os.Args[1:])
+			if err != nil {
+				log.Fatal(err)
+				break
+			}
 		}
 	} else {
 		usage()
@@ -35,6 +39,9 @@ func main() {
 }
 
 func usage() {
+	console.White("Wrapper for the terraform CLI\n")
+	console.White("Provides a 'clean' command that clears terraform cache and re-initializes the workspace\n")
+	console.White("All other commands are passed directly to the terraform CLI\n\n")
 	console.White("Usage: tf COMMAND [args]\n\n")
 	console.White("commands:\n")
 	console.White("  clean - wipes terraform cache from current scope, and re-inits terraform\n")

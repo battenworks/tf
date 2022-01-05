@@ -8,6 +8,19 @@ import (
 	"os"
 )
 
+var cmdName string = "terraform"
+
+func passThrough(cmdArgs []string) error {
+	result, err := command.Execute(cmdName, cmdArgs)
+	fmt.Print(string(result))
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func cleanScope(scope string, workspace string) error {
 	workingDir, err := validateWorkingDirectory(scope)
 	if err != nil {
@@ -19,12 +32,12 @@ func cleanScope(scope string, workspace string) error {
 	fmt.Print("workspace: ")
 	console.White(workspace + "\n")
 
-	fmt.Println("removing .terraform directory")
+	fmt.Println("removing terraform cache")
 	err = cleanTerraformCache(workingDir)
 	if err != nil {
 		return err
 	}
-	console.Green(".terraform directory removed\n")
+	console.Green("terraform cache removed\n")
 
 	fmt.Println("initializing terraform")
 	result, err := initializeTerraform()
@@ -49,7 +62,7 @@ func cleanScope(scope string, workspace string) error {
 var ErrInvalidWorkingDirectory = errors.New("invalid working directory: no backend.tf found")
 
 func validateWorkingDirectory(dir string) (string, error) {
-	if _, err := os.Stat(dir + "/backend.tf"); os.IsNotExist(err) {
+	if _, err := os.Stat(dir + "/backend.tf"); errors.Is(err, os.ErrNotExist) {
 		return dir, ErrInvalidWorkingDirectory
 	}
 
@@ -75,14 +88,12 @@ func cleanTerraformCache(dir string) error {
 }
 
 func initializeTerraform() ([]byte, error) {
-	cmdName := "terraform"
 	cmdArgs := []string{"init"}
 
 	return command.Execute(cmdName, cmdArgs)
 }
 
 func selectWorkspace(workspace string) ([]byte, error) {
-	cmdName := "terraform"
 	cmdArgs := []string{"workspace", "select", workspace}
 
 	return command.Execute(cmdName, cmdArgs)
