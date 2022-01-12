@@ -8,10 +8,11 @@ import (
 	"os"
 )
 
-var cmdName string = "terraform"
+const cmdName = "terraform"
 
 func passThrough(cmdArgs []string) error {
-	result, err := command.Execute(cmdName, cmdArgs)
+	commander := command.ExecCommander{Name: cmdName, Args: cmdArgs}
+	result, err := commander.Execute()
 	fmt.Print(string(result))
 
 	if err != nil {
@@ -89,12 +90,14 @@ func cleanTerraformCache(dir string) error {
 
 func initializeTerraform() ([]byte, error) {
 	cmdArgs := []string{"init"}
+	commander := command.ExecCommander{Name: cmdName, Args: cmdArgs}
 
-	return command.Execute(cmdName, cmdArgs)
+	return commander.Execute()
 }
 
 func selectWorkspace(workspace string) ([]byte, error) {
 	cmdArgs := []string{"workspace", "select", workspace}
+	commander := command.ExecCommander{Name: cmdName, Args: cmdArgs}
 
-	return command.Execute(cmdName, cmdArgs)
+	return commander.Execute()
 }

@@ -17,13 +17,6 @@ func main() {
 				log.Fatal(err)
 				break
 			}
-			err = fixAuthorization()
-			if err != nil {
-				log.Fatal(err)
-				break
-			}
-		case "fix":
-			err := fixAuthorization()
 			if err != nil {
 				log.Fatal(err)
 				break
