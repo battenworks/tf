@@ -1,15 +1,13 @@
 package main
 
 import (
-	"command"
 	"fmt"
 )
 
 const cmdName = "docker-compose"
 
-func passThrough(cmdArgs []string) error {
-	commander := command.ExecCommander{Name: cmdName, Args: cmdArgs}
-	result, err := commander.Execute()
+func passThrough(executor Executor, cmdArgs []string) error {
+	result, err := executor.Execute(cmdName, cmdArgs)
 	fmt.Print(string(result))
 
 	if err != nil {
@@ -19,10 +17,9 @@ func passThrough(cmdArgs []string) error {
 	return nil
 }
 
-func upDisconnected() error {
+func upDisconnected(executor Executor) error {
 	cmdArgs := []string{"up", "-d"}
-	commander := command.ExecCommander{Name: cmdName, Args: cmdArgs}
-	result, err := commander.Execute()
+	result, err := executor.Execute(cmdName, cmdArgs)
 	fmt.Print(string(result))
 
 	if err != nil {

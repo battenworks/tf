@@ -1,63 +1,14 @@
 package main
 
 import (
-	"command"
-	"console"
 	"errors"
 	"fmt"
 	"os"
+	"regexp"
+	"strings"
 )
 
 const cmdName = "terraform"
-
-func passThrough(cmdArgs []string) error {
-	commander := command.ExecCommander{Name: cmdName, Args: cmdArgs}
-	result, err := commander.Execute()
-	fmt.Print(string(result))
-
-	if err != nil {
-		return err
-	}
-
-	return nil
-}
-
-func cleanScope(scope string, workspace string) error {
-	workingDir, err := validateWorkingDirectory(scope)
-	if err != nil {
-		return err
-	}
-
-	fmt.Print("directory: ")
-	console.White(workingDir + "\n")
-	fmt.Print("workspace: ")
-	console.White(workspace + "\n")
-
-	fmt.Println("removing terraform cache")
-	err = cleanTerraformCache(workingDir)
-	if err != nil {
-		return err
-	}
-	console.Green("terraform cache removed\n")
-
-	fmt.Println("initializing terraform")
-	result, err := initializeTerraform()
-	if err != nil {
-		fmt.Print(string(result))
-		return err
-	}
-	console.Green("terraform initialized\n")
-
-	fmt.Println("selecting workspace:", workspace)
-	result, err = selectWorkspace(workspace)
-	if err != nil {
-		fmt.Print(string(result))
-		return err
-	}
-	fmt.Print(string(result))
-
-	return nil
-}
 
 // ErrInvalidWorkingDirectory error constant
 var ErrInvalidWorkingDirectory = errors.New("invalid working directory: no backend.tf found")
@@ -88,16 +39,69 @@ func cleanTerraformCache(dir string) error {
 	return nil
 }
 
-func initializeTerraform() ([]byte, error) {
+func initializeTerraform(executor Executor) (string, error) {
 	cmdArgs := []string{"init"}
-	commander := command.ExecCommander{Name: cmdName, Args: cmdArgs}
+	result, err := executor.Execute(cmdName, cmdArgs...)
 
-	return commander.Execute()
+	return string(result), err
 }
 
-func selectWorkspace(workspace string) ([]byte, error) {
+func selectWorkspace(executor Executor, workspace string) (string, error) {
 	cmdArgs := []string{"workspace", "select", workspace}
-	commander := command.ExecCommander{Name: cmdName, Args: cmdArgs}
+	result, err := executor.Execute(cmdName, cmdArgs...)
 
-	return commander.Execute()
+	return string(result), err
+}
+
+func plan(executor Executor, hideDrift bool) (string, error) {
+	cmdArgs := []string{"plan"}
+
+	result, err := executor.Execute(cmdName, cmdArgs...)
+	if err != nil {
+		return string(result), err
+	}
+
+	if hideDrift {
+		lines := strings.Split(string(result), "\n")
+		linesDiscarded := 0
+		filteredOutput := []string{}
+		discarding := false
+		regexBeginDiscard := regexp.MustCompile(`Terraform detected the following changes made outside of Terraform since the$`)
+		regexEndDiscard1 := regexp.MustCompile(`Unless you have made equivalent changes to your configuration, or ignored the$`)
+		regexEndDiscard2 := regexp.MustCompile(`relevant attributes using ignore_changes, the following plan may include$`)
+		regexEndDiscard3 := regexp.MustCompile(`actions to undo or respond to these changes.$`)
+
+		for i := 0; i < len(lines); i++ {
+
+			if regexBeginDiscard.Match([]byte(lines[i])) {
+				discarding = true
+			}
+
+			if discarding {
+				linesDiscarded++
+
+				if regexEndDiscard1.Match([]byte(lines[i])) &&
+					regexEndDiscard2.Match([]byte(lines[i+1])) &&
+					regexEndDiscard3.Match([]byte(lines[i+2])) {
+					i = i + 4
+					discarding = false
+					filteredOutput = append(filteredOutput, "---- "+fmt.Sprint(linesDiscarded+4)+" lines hidden ----")
+				}
+			} else {
+				filteredOutput = append(filteredOutput, lines[i])
+			}
+		}
+
+		if !discarding {
+			return strings.Join(filteredOutput, "\n"), nil
+		}
+	}
+
+	return string(result), nil
+}
+
+func passThrough(executor Executor, cmdArgs []string) (string, error) {
+	result, err := executor.Execute(cmdName, cmdArgs...)
+
+	return string(result), err
 }

@@ -1,11 +1,5 @@
-module tf
+module github.com/battenworks/tf
 
 go 1.17
 
-require command v0.0.0
-
-require console v0.0.0
-
-replace command => ../../common/command
-
-replace console => ../../common/console
+require github.com/battenworks/go-common v1.7.0

@@ -6,13 +6,19 @@ import (
 	"os"
 )
 
+type Executor interface {
+	Execute(cmdName string, cmdArgs []string) ([]byte, error)
+}
+
+var executor Executor
+
 func main() {
 	if len(os.Args) > 1 {
 		command := os.Args[1]
 
 		switch command {
 		case "up":
-			err := upDisconnected()
+			err := upDisconnected(executor)
 			if err != nil {
 				log.Fatal(err)
 				break
@@ -24,7 +30,7 @@ func main() {
 		case "help", "-help", "--help":
 			usage()
 		default:
-			err := passThrough(os.Args[1:])
+			err := passThrough(executor, os.Args[1:])
 			if err != nil {
 				log.Fatal(err)
 				break
