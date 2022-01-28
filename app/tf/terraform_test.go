@@ -90,34 +90,37 @@ func TestPlan(t *testing.T) {
 	})
 }
 
-func assertFalse(tb testing.TB, condition bool) {
-	if condition {
-		tb.FailNow()
-	}
-}
-
 func TestCanTurnFileOff(t *testing.T) {
 	t.Run("returns false for backend.tf", func(t *testing.T) {
-		assertFalse(t, canTurnFileOff("backend.tf"))
+		file := "backend.tf"
+		assert.False(t, canTurnFileOff(file), "should NOT be able to turn %s off", file)
 	})
 	t.Run("returns true for files that end in .tf", func(t *testing.T) {
-		assert.True(t, canTurnFileOff("file1.tf"), "hmmm")
-		assert.True(t, canTurnFileOff("file2.tf"), "hmmm")
+		file1 := "file1.tf"
+		file2 := "file2.tf"
+		assert.True(t, canTurnFileOff(file1), "should be able to turn %s off", file1)
+		assert.True(t, canTurnFileOff(file2), "should be able to turn %s off", file2)
 	})
 	t.Run("returns false for files that DONT end in .tf", func(t *testing.T) {
-		assertFalse(t, canTurnFileOff("foo.bar"))
-		assertFalse(t, canTurnFileOff("bar.baz"))
+		file1 := "foo.bar"
+		file2 := "bar.baz"
+		assert.False(t, canTurnFileOff(file1), "should NOT be able to turn %s off", file1)
+		assert.False(t, canTurnFileOff(file2), "should NOT be able to turn %s off", file2)
 	})
 }
 
 func TestCanTurnFileOn(t *testing.T) {
 	t.Run("returns true for files that end in .tfoff", func(t *testing.T) {
-		assert.True(t, canTurnFileOn("file1.tf"+OffFileExtension), "shit")
-		assert.True(t, canTurnFileOn("file2.tf"+OffFileExtension), "shit")
+		file1 := "file1.tf" + OffFileExtension
+		file2 := "file2.tf" + OffFileExtension
+		assert.True(t, canTurnFileOn(file1), "should be able to turn %s on", file1)
+		assert.True(t, canTurnFileOn(file2), "should be able to turn %s on", file2)
 	})
 	t.Run("returns false for files that DONT end in .tfoff", func(t *testing.T) {
-		assertFalse(t, canTurnFileOn("backend.tf"))
-		assertFalse(t, canTurnFileOn(".terraform.locl.hcl"))
+		backendFile := "backend.tf"
+		lockFile := ".terraform.lock.hcl"
+		assert.False(t, canTurnFileOn(backendFile), "should NOT be able to turn %s on", backendFile)
+		assert.False(t, canTurnFileOn(lockFile), "should NOT be able to turn %s on", lockFile)
 	})
 }
 
