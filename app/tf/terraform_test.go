@@ -1,6 +1,7 @@
 package main
 
 import (
+	"errors"
 	"os"
 	"testing"
 
@@ -86,5 +87,120 @@ func TestPlan(t *testing.T) {
 		expected := output_with_drift_removed
 
 		assert.Equals(t, expected, actual)
+	})
+}
+
+func assertFalse(tb testing.TB, condition bool) {
+	if condition {
+		tb.FailNow()
+	}
+}
+
+func TestCanTurnFileOff(t *testing.T) {
+	t.Run("returns false for backend.tf", func(t *testing.T) {
+		assertFalse(t, canTurnFileOff("backend.tf"))
+	})
+	t.Run("returns true for files that end in .tf", func(t *testing.T) {
+		assert.True(t, canTurnFileOff("file1.tf"), "hmmm")
+		assert.True(t, canTurnFileOff("file2.tf"), "hmmm")
+	})
+	t.Run("returns false for files that DONT end in .tf", func(t *testing.T) {
+		assertFalse(t, canTurnFileOff("foo.bar"))
+		assertFalse(t, canTurnFileOff("bar.baz"))
+	})
+}
+
+func TestCanTurnFileOn(t *testing.T) {
+	t.Run("returns true for files that end in .tfoff", func(t *testing.T) {
+		assert.True(t, canTurnFileOn("file1.tf"+OffFileExtension), "shit")
+		assert.True(t, canTurnFileOn("file2.tf"+OffFileExtension), "shit")
+	})
+	t.Run("returns false for files that DONT end in .tfoff", func(t *testing.T) {
+		assertFalse(t, canTurnFileOn("backend.tf"))
+		assertFalse(t, canTurnFileOn(".terraform.locl.hcl"))
+	})
+}
+
+func assertFileExists(tb testing.TB, file string) {
+	if _, err := os.Stat(file); errors.Is(err, os.ErrNotExist) {
+		tb.FailNow()
+	}
+}
+
+func assertFileNotExists(tb testing.TB, file string) {
+	if _, err := os.Stat(file); errors.Is(err, os.ErrNotExist) {
+		// pass
+	} else {
+		tb.FailNow()
+	}
+}
+
+func TestOff(t *testing.T) {
+	t.Run("ignore backend.tf", func(t *testing.T) {
+		currentDir, _ := os.Getwd()
+		backendFile := currentDir + "/backend.tf"
+		os.Create(backendFile)
+		defer os.Remove(backendFile)
+
+		err := off(currentDir)
+
+		assert.NoError(t, err)
+		assertFileExists(t, backendFile)
+	})
+	t.Run("ignore .terraform.lock.hcl", func(t *testing.T) {
+		currentDir, _ := os.Getwd()
+		lockFile := currentDir + "/.terraform.lock.hcl"
+		os.Create(lockFile)
+		defer os.Remove(lockFile)
+
+		err := off(currentDir)
+
+		assert.NoError(t, err)
+		assertFileExists(t, lockFile)
+	})
+	t.Run("adds off extension to .tf files", func(t *testing.T) {
+		currentDir, _ := os.Getwd()
+		file1 := currentDir + "/one.tf"
+		file1off := file1 + OffFileExtension
+		file2 := currentDir + "/two.tf"
+		file2off := file2 + OffFileExtension
+		os.Create(file1)
+		os.Create(file2)
+		defer os.Remove(file1)
+		defer os.Remove(file2)
+
+		err := off(currentDir)
+		defer os.Remove(file1off)
+		defer os.Remove(file2off)
+
+		assert.NoError(t, err)
+		assertFileNotExists(t, file1)
+		assertFileNotExists(t, file2)
+		assertFileExists(t, file1off)
+		assertFileExists(t, file2off)
+	})
+}
+
+func TestOn(t *testing.T) {
+	t.Run("removes off extension from .tfoff files", func(t *testing.T) {
+		currentDir, _ := os.Getwd()
+		file1 := currentDir + "/one.tf"
+		file1off := file1 + OffFileExtension
+		file2 := currentDir + "/two.tf"
+		file2off := file2 + OffFileExtension
+		os.Create(file1off)
+		os.Create(file2off)
+		defer os.Remove(file1off)
+		defer os.Remove(file2off)
+
+		err := on(currentDir)
+		defer os.Remove(file1)
+		defer os.Remove(file2)
+
+		assert.NoError(t, err)
+		assertFileNotExists(t, file1off)
+		assertFileNotExists(t, file2off)
+		assertFileExists(t, file1)
+		assertFileExists(t, file2)
 	})
 }

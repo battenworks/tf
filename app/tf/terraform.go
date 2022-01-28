@@ -3,7 +3,9 @@ package main
 import (
 	"errors"
 	"fmt"
+	"io/ioutil"
 	"os"
+	"path/filepath"
 	"regexp"
 	"strings"
 )
@@ -12,6 +14,9 @@ const cmdName = "terraform"
 
 // ErrInvalidWorkingDirectory error constant
 var ErrInvalidWorkingDirectory = errors.New("invalid working directory: no backend.tf found")
+
+// OffFileExtension is the file extension used to trun .tf files off and on
+var OffFileExtension = ".off"
 
 func validateWorkingDirectory(dir string) (string, error) {
 	if _, err := os.Stat(dir + "/backend.tf"); errors.Is(err, os.ErrNotExist) {
@@ -98,6 +103,54 @@ func plan(executor Executor, hideDrift bool) (string, error) {
 	}
 
 	return string(result), nil
+}
+
+func off(currentDir string) error {
+	files, err := ioutil.ReadDir(currentDir)
+	if err != nil {
+		return err
+	}
+
+	for _, file := range files {
+		if !file.IsDir() && canTurnFileOff(file.Name()) {
+			filePath := currentDir + "/" + file.Name()
+
+			err := os.Rename(filePath, filePath+OffFileExtension)
+			if err != nil {
+				return err
+			}
+		}
+	}
+
+	return nil
+}
+
+func canTurnFileOff(file string) bool {
+	return file != "backend.tf" && filepath.Ext(file) == ".tf"
+}
+
+func on(currentDir string) error {
+	files, err := ioutil.ReadDir(currentDir)
+	if err != nil {
+		return err
+	}
+
+	for _, file := range files {
+		if !file.IsDir() && canTurnFileOn(file.Name()) {
+			filePath := currentDir + "/" + file.Name()
+
+			err := os.Rename(filePath, filePath[0:len(filePath)-len(OffFileExtension)])
+			if err != nil {
+				return err
+			}
+		}
+	}
+
+	return nil
+}
+
+func canTurnFileOn(file string) bool {
+	return filepath.Ext(file) == OffFileExtension
 }
 
 func passThrough(executor Executor, cmdArgs []string) (string, error) {
