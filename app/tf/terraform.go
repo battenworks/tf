@@ -105,15 +105,15 @@ func plan(executor Executor, hideDrift bool) (string, error) {
 	return string(result), nil
 }
 
-func off(currentDir string) error {
-	files, err := ioutil.ReadDir(currentDir)
+func off(dir string) error {
+	files, err := ioutil.ReadDir(dir)
 	if err != nil {
 		return err
 	}
 
 	for _, file := range files {
 		if !file.IsDir() && canTurnFileOff(file.Name()) {
-			filePath := currentDir + "/" + file.Name()
+			filePath := dir + "/" + file.Name()
 
 			err := os.Rename(filePath, filePath+OffFileExtension)
 			if err != nil {
@@ -129,15 +129,15 @@ func canTurnFileOff(file string) bool {
 	return file != "backend.tf" && filepath.Ext(file) == ".tf"
 }
 
-func on(currentDir string) error {
-	files, err := ioutil.ReadDir(currentDir)
+func on(dir string) error {
+	files, err := ioutil.ReadDir(dir)
 	if err != nil {
 		return err
 	}
 
 	for _, file := range files {
 		if !file.IsDir() && canTurnFileOn(file.Name()) {
-			filePath := currentDir + "/" + file.Name()
+			filePath := dir + "/" + file.Name()
 
 			err := os.Rename(filePath, filePath[0:len(filePath)-len(OffFileExtension)])
 			if err != nil {

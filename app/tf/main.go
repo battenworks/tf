@@ -26,22 +26,10 @@ func main() {
 
 		switch command {
 		case "clean":
-			scope, err := os.Getwd()
-			if err != nil {
-				console.Outln(err.Error())
-				break
-			}
-
-			workingDir, err := validateWorkingDirectory(scope)
-			if err != nil {
-				console.Outln(err.Error())
-				break
-			}
-			console.Out("directory: ")
-			console.WhitelnBold(workingDir)
+			workingDir := getWorkingDirectory()
 
 			console.Outln("removing terraform cache")
-			err = cleanTerraformCache(workingDir)
+			err := cleanTerraformCache(workingDir)
 			if err != nil {
 				console.Outln(err.Error())
 				break
@@ -66,6 +54,22 @@ func main() {
 		case "plan":
 			result, _ := plan(executor, *hideDrift)
 			console.Out(result)
+		case "off":
+			workingDir := getWorkingDirectory()
+
+			err := off(workingDir)
+			if err != nil{
+				console.Outln(err.Error())
+				break
+			}
+		case "on":
+			workingDir := getWorkingDirectory()
+
+			err := on(workingDir)
+			if err != nil{
+				console.Outln(err.Error())
+				break
+			}
 		case "help", "-help", "--help":
 			usage()
 		default:
@@ -75,6 +79,22 @@ func main() {
 	} else {
 		usage()
 	}
+}
+
+func getWorkingDirectory() string {
+	scope, err := os.Getwd()
+	if err != nil {
+		console.Outln(err.Error())
+	}
+
+	workingDir, err := validateWorkingDirectory(scope)
+	if err != nil {
+		console.Outln(err.Error())
+	}
+	console.Out("directory: ")
+	console.WhitelnBold(workingDir)
+
+	return workingDir
 }
 
 func usage() {

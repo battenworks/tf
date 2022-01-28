@@ -91,17 +91,21 @@ func TestPlan(t *testing.T) {
 }
 
 func TestCanTurnFileOff(t *testing.T) {
-	t.Run("returns false for backend.tf", func(t *testing.T) {
+	t.Run("returns false for backend file", func(t *testing.T) {
 		file := "backend.tf"
 		assert.False(t, canTurnFileOff(file), "should NOT be able to turn %s off", file)
 	})
-	t.Run("returns true for files that end in .tf", func(t *testing.T) {
+	t.Run("returns false for lock file", func(t *testing.T) {
+		file := ".terraform.locl.hcl"
+		assert.False(t, canTurnFileOff(file), "should NOT be able to turn %s off", file)
+	})
+	t.Run("returns true for files that have the TF extension", func(t *testing.T) {
 		file1 := "file1.tf"
 		file2 := "file2.tf"
 		assert.True(t, canTurnFileOff(file1), "should be able to turn %s off", file1)
 		assert.True(t, canTurnFileOff(file2), "should be able to turn %s off", file2)
 	})
-	t.Run("returns false for files that DONT end in .tf", func(t *testing.T) {
+	t.Run("returns false for files that DONT have the TF extension", func(t *testing.T) {
 		file1 := "foo.bar"
 		file2 := "bar.baz"
 		assert.False(t, canTurnFileOff(file1), "should NOT be able to turn %s off", file1)
@@ -110,13 +114,13 @@ func TestCanTurnFileOff(t *testing.T) {
 }
 
 func TestCanTurnFileOn(t *testing.T) {
-	t.Run("returns true for files that end in .tfoff", func(t *testing.T) {
+	t.Run("returns true for files that have the OFF extension", func(t *testing.T) {
 		file1 := "file1.tf" + OffFileExtension
 		file2 := "file2.tf" + OffFileExtension
 		assert.True(t, canTurnFileOn(file1), "should be able to turn %s on", file1)
 		assert.True(t, canTurnFileOn(file2), "should be able to turn %s on", file2)
 	})
-	t.Run("returns false for files that DONT end in .tfoff", func(t *testing.T) {
+	t.Run("returns false for files that DONT have the OFF extension", func(t *testing.T) {
 		backendFile := "backend.tf"
 		lockFile := ".terraform.lock.hcl"
 		assert.False(t, canTurnFileOn(backendFile), "should NOT be able to turn %s on", backendFile)
@@ -139,7 +143,7 @@ func assertFileNotExists(tb testing.TB, file string) {
 }
 
 func TestOff(t *testing.T) {
-	t.Run("ignore backend.tf", func(t *testing.T) {
+	t.Run("ignore backend file", func(t *testing.T) {
 		currentDir, _ := os.Getwd()
 		backendFile := currentDir + "/backend.tf"
 		os.Create(backendFile)
@@ -150,7 +154,7 @@ func TestOff(t *testing.T) {
 		assert.NoError(t, err)
 		assertFileExists(t, backendFile)
 	})
-	t.Run("ignore .terraform.lock.hcl", func(t *testing.T) {
+	t.Run("ignore lock file", func(t *testing.T) {
 		currentDir, _ := os.Getwd()
 		lockFile := currentDir + "/.terraform.lock.hcl"
 		os.Create(lockFile)
@@ -161,7 +165,7 @@ func TestOff(t *testing.T) {
 		assert.NoError(t, err)
 		assertFileExists(t, lockFile)
 	})
-	t.Run("adds off extension to .tf files", func(t *testing.T) {
+	t.Run("adds OFF extension to TF files", func(t *testing.T) {
 		currentDir, _ := os.Getwd()
 		file1 := currentDir + "/one.tf"
 		file1off := file1 + OffFileExtension
@@ -185,7 +189,7 @@ func TestOff(t *testing.T) {
 }
 
 func TestOn(t *testing.T) {
-	t.Run("removes off extension from .tfoff files", func(t *testing.T) {
+	t.Run("removes OFF extension from TF files", func(t *testing.T) {
 		currentDir, _ := os.Getwd()
 		file1 := currentDir + "/one.tf"
 		file1off := file1 + OffFileExtension
