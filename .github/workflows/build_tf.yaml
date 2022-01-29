@@ -5,31 +5,28 @@ on:
     branches:
       - main
     paths:
-      - 'app/tf'
+      - app/tf
   pull_request:
     branches:
       - main
     paths:
-      - 'app/tf'
+      - app/tf
   workflow_dispatch:
 
 jobs:
-
   build:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
-
     - name: setup
       uses: actions/setup-go@v2
       with:
         go-version: 1.17
-
     - name: ls
       run: ls
-
     - name: build
-      run: go build -v app/tf
-
+      run: go build -v
+      working-directory: app/tf
     - name: test
-      run: go test -v app/tf
+      run: go test -v
+      working-directory: app/tf
