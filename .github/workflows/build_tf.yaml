@@ -23,12 +23,12 @@ jobs:
       with:
         go-version: 1.17
     - run: pwd
-    - run: mkdir -p artifacts
+    - run: mkdir -p ./artifacts
     - name: test
       run: go test
       working-directory: app/tf
     - name: build
-      run: go build -o artifacts/tf
+      run: go build -o ./artifacts/tf
       working-directory: app/tf
     - run: pwd
-    - run: ls artifacts
+    - run: ls ./artifacts
