@@ -22,13 +22,13 @@ jobs:
       uses: actions/setup-go@v2
       with:
         go-version: 1.17
-    - run: pwd
     - run: mkdir -p ./artifacts
+    - run: ls
     - name: test
       run: go test
       working-directory: app/tf
     - name: build
       run: go build -o ./artifacts/tf
       working-directory: app/tf
-    - run: pwd
-    - run: ls ./artifacts
+    - run: ls app/tf
+    - run: ls
