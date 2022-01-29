@@ -8,7 +8,6 @@ From the `app/tf` directory, execute the following.
 go build -o <some place on your path>/tf
 ```
 
-#
 ## Use tf clean
 To clean and prepare your Terraform working directory for further commands.
 ```
@@ -23,7 +22,6 @@ You can supply your own workspace with an optional flag.
 tf clean -workspace=my-workspace
 ```
 
-#
 ## Use tf plan
 To run a Terraform plan, optionally altering the output for clarity.
 ```
@@ -46,17 +44,15 @@ No changes. Your infrastructure matches the configuration.
 Your configuration already matches the changes detected above. If you'd like to update the Terraform state to match, create and apply a refresh-only plan.
 ```
 
-#
 ## Use tf off
-For rapid development of Terraform config. This command modifies all files but `backend.tf`, so the next `apply` will tear down the resources. Used in conjunction with `tf on`.
+For rapid development of Terraform config. This command modifies all config files but `backend.tf`, so the next `apply` will tear down the resources. Used in conjunction with `tf on`.
 ```
 tf off
 ```
 - Adds the `.off` extension to all config files in the current directory (with the exception of `backend.tf`).
 
-#
 ## Use tf on
-For rapid development of Terraform config. This command modifies all files so the next `apply` will stand up the resources. Used in conjunction with `tf off`.
+For rapid development of Terraform config. This command modifies all config files so the next `apply` will stand up the resources. Used in conjunction with `tf off`.
 ```
 tf on
 ```
