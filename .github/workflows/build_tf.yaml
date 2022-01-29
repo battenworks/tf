@@ -26,7 +26,6 @@ jobs:
       run: go test
       working-directory: app/tf
     - name: build
-      run: go build -o artifacts/tf
+      run: go build -o ../../artifacts/tf
       working-directory: app/tf
-    - run: ls app/tf/artifacts
-    - run: ls
+    - run: ls artifacts
