@@ -22,16 +22,12 @@ jobs:
       uses: actions/setup-go@v2
       with:
         go-version: 1.17
-    - run: ls
-    - run: ls app
+    - run: mkdir -p artifacts
     - name: test
       run: go test
       working-directory: app/tf
-    - name: mkdir artifacts
-      run: mkdir -p artifacts/
     - name: build
       run: go build -o artifacts/tf
       working-directory: app/tf
-    - run: ls app/tf
     - name: list artifacts
-      run: ls artifacts/
+      run: ls artifacts
