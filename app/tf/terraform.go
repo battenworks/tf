@@ -15,7 +15,7 @@ const cmdName = "terraform"
 // ErrInvalidWorkingDirectory error constant
 var ErrInvalidWorkingDirectory = errors.New("invalid working directory: no backend.tf found")
 
-// OffFileExtension is the file extension used to trun .tf files off and on
+// OffFileExtension is the file extension used to turn .tf files off and on
 var OffFileExtension = ".off"
 
 func validateWorkingDirectory(dir string) (string, error) {
@@ -51,11 +51,11 @@ func initializeTerraform(executor Executor) (string, error) {
 	return string(result), err
 }
 
-func selectWorkspace(executor Executor, workspace string) (string, error) {
+func selectWorkspace(executor Executor, workspace string) error {
 	cmdArgs := []string{"workspace", "select", workspace}
-	result, err := executor.Execute(cmdName, cmdArgs...)
+	_, err := executor.Execute(cmdName, cmdArgs...)
 
-	return string(result), err
+	return err
 }
 
 func plan(executor Executor, hideDrift bool) (string, error) {

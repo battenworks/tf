@@ -43,7 +43,7 @@ func main() {
 				break
 			}
 
-			_, err = selectWorkspace(executor, *workspace)
+			err = selectWorkspace(executor, *workspace)
 			console.Outln("")
 			if err != nil {
 				console.Outln(err.Error())
@@ -52,13 +52,17 @@ func main() {
 			console.Out("workspace: ")
 			console.WhitelnBold(*workspace)
 		case "plan":
-			result, _ := plan(executor, *hideDrift)
+			result, err := plan(executor, *hideDrift)
+			if err != nil {
+				console.Outln(err.Error())
+				break
+			}
 			console.Out(result)
 		case "off":
 			workingDir := getWorkingDirectory()
 
 			err := off(workingDir)
-			if err != nil{
+			if err != nil {
 				console.Outln(err.Error())
 				break
 			}
@@ -66,7 +70,7 @@ func main() {
 			workingDir := getWorkingDirectory()
 
 			err := on(workingDir)
-			if err != nil{
+			if err != nil {
 				console.Outln(err.Error())
 				break
 			}
@@ -91,14 +95,11 @@ func getWorkingDirectory() string {
 	if err != nil {
 		console.Outln(err.Error())
 	}
-	console.Out("directory: ")
-	console.WhitelnBold(workingDir)
 
 	return workingDir
 }
 
 func usage() {
-	console.Blueln("damn")
 	console.Whiteln("Wrapper for the Terraform CLI")
 	console.Whiteln("Provides some opinionated commands to help with Terraform CLI use")
 	console.Whiteln("All other commands are passed directly to the Terraform CLI")
@@ -112,4 +113,8 @@ func usage() {
 	console.Yellow("  plan")
 	console.Whiteln(" - calls terraform plan with an optional arg to hide drift output")
 	console.Whiteln("    args: -hide-drift")
+	console.Yellow("  off")
+	console.Whiteln(" - adds the '.off' extension to all config files in the working directory")
+	console.Yellow("  on")
+	console.Whiteln(" - removes the '.off' extension from all config files in the working directory")
 }
