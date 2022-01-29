@@ -5,12 +5,12 @@ on:
     branches:
       - main
     paths:
-      - 'app/tf'
+      - 'app/tf/**'
   pull_request:
     branches:
       - main
     paths:
-      - 'app/tf'
+      - 'app/tf/**'
 
 jobs:
   build:
