@@ -57,4 +57,3 @@ For rapid development of Terraform config. This command modifies all config file
 tf on
 ```
 - Removes the `.off` extension from all config files in the current directory.
-- boo
