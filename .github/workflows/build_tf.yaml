@@ -32,5 +32,6 @@ jobs:
     - name: build
       run: go build -o artifacts/tf
       working-directory: app/tf
+    - run: ls app/tf
     - name: list artifacts
       run: ls artifacts/
