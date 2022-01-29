@@ -28,3 +28,6 @@ jobs:
     - name: build
       run: go build -o artifacts/ -v
       working-directory: app/tf
+    - name: ls
+      run: ls
+      working-directory: artifacts
