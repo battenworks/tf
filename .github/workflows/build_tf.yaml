@@ -2,11 +2,14 @@ name: build tf
 
 on:
   push:
-    branches: [ main ]
+    branches:
+      - main
     paths: ./app/tf
   pull_request:
-    branches: [ main ]
+    branches:
+      - main
     paths: ./app/tf
+  workflow_dispatch:
 
 jobs:
 
