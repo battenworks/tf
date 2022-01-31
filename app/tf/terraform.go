@@ -58,12 +58,12 @@ func selectWorkspace(executor Executor, workspace string) error {
 	return err
 }
 
-func plan(executor Executor, hideDrift bool) (string, error) {
+func plan(executor Executor, hideDrift bool) string {
 	cmdArgs := []string{"plan"}
 
 	result, err := executor.Execute(cmdName, cmdArgs...)
 	if err != nil {
-		return string(result), err
+		return string(result)
 	}
 
 	if hideDrift {
@@ -98,11 +98,11 @@ func plan(executor Executor, hideDrift bool) (string, error) {
 		}
 
 		if !discarding {
-			return strings.Join(filteredOutput, "\n"), nil
+			return strings.Join(filteredOutput, "\n")
 		}
 	}
 
-	return string(result), nil
+	return string(result)
 }
 
 func off(dir string) error {

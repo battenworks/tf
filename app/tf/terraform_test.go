@@ -73,7 +73,7 @@ func TestPlan(t *testing.T) {
 		executor := FakeExecutor{}
 		hideDrift := false
 
-		actual, _ := plan(executor, hideDrift)
+		actual := plan(executor, hideDrift)
 		expected := full_output
 
 		assert.Equals(t, expected, actual)
@@ -83,7 +83,7 @@ func TestPlan(t *testing.T) {
 		executor := FakeExecutor{}
 		hideDrift := true
 
-		actual, _ := plan(executor, hideDrift)
+		actual := plan(executor, hideDrift)
 		expected := output_with_drift_removed
 
 		assert.Equals(t, expected, actual)

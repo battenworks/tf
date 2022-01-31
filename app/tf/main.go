@@ -52,11 +52,7 @@ func main() {
 			console.Out("workspace: ")
 			console.WhitelnBold(*workspace)
 		case "plan":
-			result, err := plan(executor, *hideDrift)
-			if err != nil {
-				console.Outln(err.Error())
-				break
-			}
+			result := plan(executor, *hideDrift)
 			console.Out(result)
 		case "off":
 			workingDir := getWorkingDirectory()
