@@ -36,8 +36,7 @@ jobs:
         env:
           GOOS: ${{ matrix.os }}
 
-      - run: ls ../
-        working-directory: tf
+      - run: ls -a
 
       # - run: .github/build.sh tf
       #   env:
