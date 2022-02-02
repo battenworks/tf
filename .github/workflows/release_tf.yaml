@@ -30,7 +30,7 @@ jobs:
         env:
           GOOS: linux # the tests will only run if the os matches the os of the system of run-on
 
-      - run: go build -o tf${{ matrix.os == 'windows' && '.exe' || '' }}
+      - run: go build -o ../tf${{ matrix.os == 'windows' && '.exe' || '' }}
         working-directory: tf
         env:
           GOOS: ${{ matrix.os }}
