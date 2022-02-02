@@ -45,6 +45,7 @@ jobs:
           BINARY_DIRECTORY: artifacts
           BINARY_NAME: tf
           VERSION: 0.0.0
+          TAG: ${{ github.latest }}
 
       # - uses: svenstaro/upload-release-action@v2
       #   with:
