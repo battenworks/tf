@@ -1,11 +1,8 @@
 #!/bin/bash
 set -eux
 
-PROJECT_NAME=$(basename $GITHUB_REPOSITORY)
-NAME="${PROJECT_NAME}_${VERSION}_${GOOS}_${GOARCH}"
-
-echo $GITHUB_REPOSITORY
-echo $PROJECT_NAME
+BINARY_NAME=$1
+NAME="${BINARY_NAME}_${VERSION}_${GOOS}_${GOARCH}"
 
 EXT=''
 
@@ -13,5 +10,5 @@ if [ $GOOS == 'windows' ]; then
   EXT='.exe'
 fi
 
-tar cvfz ${NAME}.tar.gz "${PROJECT_NAME}${EXT}" LICENSE
+tar cvfz ${NAME}.tar.gz "${BINARY_NAME}${EXT}" LICENSE
 md5sum ${NAME}.tar.gz | cut -d ' ' -f 1 > ${NAME}_checksum.txt
