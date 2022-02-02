@@ -1,8 +1,6 @@
 #!/bin/bash
 set -eux
 
-echo $TAG
-
 cd $BINARY_DIRECTORY
 NAME="${BINARY_NAME}_${VERSION}_${GOOS}_${GOARCH}"
 EXT=''

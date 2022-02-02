@@ -44,18 +44,17 @@ jobs:
         env:
           BINARY_DIRECTORY: artifacts
           BINARY_NAME: tf
-          VERSION: 0.0.0
-          TAG: ${{ github.latest }}
+          VERSION: 0.0.3
 
-      # - uses: svenstaro/upload-release-action@v2
-      #   with:
-      #     repo_token: ${{ secrets.GITHUB_TOKEN }}
-      #     file: "artifacts/*{.tar.gz,_checksum.txt}"
-      #     tag: ${{ github.ref }}
-      #     overwrite: true
-      #     file_glob: true
+      - uses: svenstaro/upload-release-action@v2
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: "artifacts/*{.tar.gz,_checksum.txt}"
+          tag: ${{ github.ref }}
+          overwrite: true
+          file_glob: true
 
-      # - if: matrix.os == 'darwin' || matrix.os == 'linux'
-      #   id: shasum
-      #   run: |
-      #     echo ::set-output name=sha_${{matrix.os}}::"$(shasum -a 256 *.tar.gz | awk '{printf $1}')"
+      - if: matrix.os == 'darwin' || matrix.os == 'linux'
+        id: shasum
+        run: |
+          echo ::set-output name=sha_${{matrix.os}}::"$(shasum -a 256 *.tar.gz | awk '{printf $1}')"
