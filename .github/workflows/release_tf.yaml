@@ -36,13 +36,13 @@ jobs:
         env:
           GOOS: ${{ matrix.os }}
 
+      - run: .github/build.sh tf
+        env:
+          VERSION: ${{ github.ref }}
+
       - run: ls -a
       - run: ls -a .github
       - run: ls -a artifacts
-
-      # - run: .github/build.sh tf
-      #   env:
-      #     VERSION: ${{ github.ref }}
 
       # - uses: svenstaro/upload-release-action@v2
       #   with:
