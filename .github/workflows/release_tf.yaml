@@ -36,8 +36,10 @@ jobs:
         env:
           GOOS: ${{ matrix.os }}
 
-      - run: .github/build.sh tf
+      - run: .github/build.sh
         env:
+          BINARY_DIRECTORY: artifacts
+          BINARY_NAME: tf
           VERSION: ${{ github.ref }}
 
       - run: ls -a

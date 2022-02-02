@@ -1,17 +1,15 @@
 #!/bin/bash
 set -eux
 
-# PROJECT_NAME="$(basename $GITHUB_REPOSITORY)"
-# NAME="${PROJECT_NAME}_${VERSION}_${GOOS}_${GOARCH}"
+cd $BINARY_DIRECTORY
+NAME="${BINARY_NAME}_${VERSION}_${GOOS}_${GOARCH}"
 
-# EXT=''
+EXT=''
 
-# if [ $GOOS == 'windows' ]; then
-#   EXT='.exe'
-# fi
+if [ $GOOS == 'windows' ]; then
+  EXT='.exe'
+fi
 
-# tar cvfz ${NAME}.tar.gz "${PROJECT_NAME}${EXT}" LICENSE
-# md5sum ${NAME}.tar.gz | cut -d ' ' -f 1 > ${NAME}_checksum.txt
-
-cd artifacts
 ls -a
+# tar cvfz ${NAME}.tar.gz "${BINARY_NAME}${EXT}" LICENSE
+# md5sum ${NAME}.tar.gz | cut -d ' ' -f 1 > ${NAME}_checksum.txt
