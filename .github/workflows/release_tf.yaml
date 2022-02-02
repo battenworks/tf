@@ -3,7 +3,7 @@ name: release tf
 on:
   push:
     tags:
-      - 'v1.**'
+      - 'v**'
 
 jobs:
   release:
