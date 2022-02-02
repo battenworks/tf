@@ -1,7 +1,7 @@
 #!/bin/bash
 set -eux
 
-cd $BINARY_DIRECTORY
+cd $ARTIFACT_DIRECTORY
 
 VERSION=${GITHUB_REF#"refs/tags/"}
 VERSION=${VERSION#"refs/heads/"}
