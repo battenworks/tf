@@ -1,6 +1,9 @@
 #!/bin/bash
 set -eux
 
+foo=${GITHUB_REF#"refs/tags/"}
+echo $foo
+
 cd $BINARY_DIRECTORY
 NAME="${BINARY_NAME}_${VERSION}_${GOOS}_${GOARCH}"
 EXT=''

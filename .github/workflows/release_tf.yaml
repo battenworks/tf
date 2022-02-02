@@ -46,7 +46,7 @@ jobs:
         env:
           BINARY_DIRECTORY: artifacts
           BINARY_NAME: tf
-          VERSION: 0.0.3
+          GITHUB_REF: ${{ github.ref }}
 
       - uses: svenstaro/upload-release-action@v2
         with:
