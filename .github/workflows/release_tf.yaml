@@ -37,6 +37,8 @@ jobs:
           GOOS: ${{ matrix.os }}
 
       - run: ls -a
+      - run: ls -a .github
+      - run: ls -a tf
 
       # - run: .github/build.sh tf
       #   env:
