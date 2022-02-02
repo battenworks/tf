@@ -10,6 +10,5 @@ if [ $GOOS == 'windows' ]; then
   EXT='.exe'
 fi
 
-ls -a
-# tar cvfz ${NAME}.tar.gz "${BINARY_NAME}${EXT}" LICENSE
-# md5sum ${NAME}.tar.gz | cut -d ' ' -f 1 > ${NAME}_checksum.txt
+tar cvfz ${NAME}.tar.gz "${BINARY_NAME}${EXT}" LICENSE
+md5sum ${NAME}.tar.gz | cut -d ' ' -f 1 > ${NAME}_checksum.txt
