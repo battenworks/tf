@@ -13,4 +13,5 @@ set -eux
 # tar cvfz ${NAME}.tar.gz "${PROJECT_NAME}${EXT}" LICENSE
 # md5sum ${NAME}.tar.gz | cut -d ' ' -f 1 > ${NAME}_checksum.txt
 
+cd artifacts
 ls -a
