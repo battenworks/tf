@@ -35,7 +35,7 @@ jobs:
         env:
           GOOS: ${{ matrix.os }}
       - name: Create release artifacts using .github/build
-        run: .github/build
+        run: .github/build.sh
         working-directory: tf
         env:
           VERSION: ${{ github.ref }}
