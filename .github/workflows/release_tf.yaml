@@ -28,7 +28,7 @@ jobs:
         env:
           GOOS: linux
 
-      - run: go build -o ../artifacts/tf${{ matrix.os == 'windows' && '.exe' || '' }}
+      - run: go build -o artifacts/tf${{ matrix.os == 'windows' && '.exe' || '' }}
         env:
           GOOS: ${{ matrix.os }}
 
