@@ -32,7 +32,7 @@ jobs:
         env:
           GOOS: ${{ matrix.os }}
 
-      - run: .github/build.sh
+      - run: .github/package-artifacts.sh
         env:
           ARTIFACT_DIRECTORY: artifacts
           BINARY_NAME: tf
