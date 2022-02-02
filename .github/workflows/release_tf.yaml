@@ -4,6 +4,7 @@ on:
   push:
     tags:
       - "*" # triggers only if push new tag version, like `0.8.4` or else
+  workflow_dispatch:
 
 jobs:
   release:
