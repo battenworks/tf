@@ -1,10 +1,10 @@
 #!/bin/bash
 set -eux
 
-foo=${GITHUB_REF#"refs/tags/"}
-echo $foo
-
 cd $BINARY_DIRECTORY
+
+VERSION=${GITHUB_REF#"refs/tags/"}
+VERSION=${VERSION#"refs/heads/"}
 NAME="${BINARY_NAME}_${VERSION}_${GOOS}_${GOARCH}"
 EXT=''
 
