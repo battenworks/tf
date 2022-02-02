@@ -11,6 +11,7 @@ on:
       - main
     paths:
       - 'tf/**'
+  workflow_dispatch:
 
 jobs:
   build:
@@ -24,6 +25,6 @@ jobs:
 
     - run: go test
       working-directory: tf
-      
+
     - run: go build -o ../../artifacts/tf
       working-directory: tf
