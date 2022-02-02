@@ -1,13 +1,6 @@
 # tf
 This tool wraps Terraform to provide additional functionality.
 
-## Build from source
-From the `src` directory, execute the following.
-
-```
-go build -o <some place on your path>/tf
-```
-
 ## Use tf clean
 To clean and prepare your Terraform working directory for further commands.
 ```
@@ -57,3 +50,8 @@ For rapid development of Terraform config. This command modifies all config file
 tf on
 ```
 - Removes the `.off` extension from all config files in the current directory.
+
+## Build from source
+```
+go build -o <some place on your path>/tf
+```
