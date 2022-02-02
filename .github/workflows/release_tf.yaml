@@ -36,6 +36,10 @@ jobs:
         env:
           GOOS: ${{ matrix.os }}
 
+      - run: ls -a
+      - run: ls -a .github
+      - run: ls -a artifacts
+
       - run: .github/build.sh
         env:
           BINARY_DIRECTORY: artifacts
