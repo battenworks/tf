@@ -40,7 +40,7 @@ jobs:
       # - run: ls -a .github
       # - run: ls -a artifacts
 
-      - run: git describe --abbrev=0 --tags
+      - run: git describe --always
 
       - run: .github/build.sh
         env:
