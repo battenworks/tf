@@ -1,10 +1,11 @@
 #!/bin/bash
 set -eux
 
-echo $GITHUB_REPOSITORY
-echo $PROJECT_NAME
 PROJECT_NAME=$(basename $GITHUB_REPOSITORY)
 NAME="${PROJECT_NAME}_${VERSION}_${GOOS}_${GOARCH}"
+
+echo $GITHUB_REPOSITORY
+echo $PROJECT_NAME
 
 EXT=''
 
