@@ -21,7 +21,7 @@ jobs:
       - uses: goreleaser/goreleaser-action@v2.8.1
         with:
           version: latest
-          args: release --rm-dist
+          args: -o tf release --rm-dist
           workdir: tf
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
