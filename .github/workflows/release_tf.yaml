@@ -36,9 +36,9 @@ jobs:
         env:
           GOOS: ${{ matrix.os }}
 
-      - run: ls -a
-      - run: ls -a .github
-      - run: ls -a artifacts
+      # - run: ls -a
+      # - run: ls -a .github
+      # - run: ls -a artifacts
 
       - run: .github/build.sh
         env:
@@ -46,14 +46,10 @@ jobs:
           BINARY_NAME: tf
           VERSION: 0.0.0
 
-      - run: ls -a
-      - run: ls -a .github
-      - run: ls -a artifacts
-
       # - uses: svenstaro/upload-release-action@v2
       #   with:
       #     repo_token: ${{ secrets.GITHUB_TOKEN }}
-      #     file: "tf/*{.tar.gz,_checksum.txt}"
+      #     file: "artifacts/*{.tar.gz,_checksum.txt}"
       #     tag: ${{ github.ref }}
       #     overwrite: true
       #     file_glob: true
