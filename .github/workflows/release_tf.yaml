@@ -8,21 +8,47 @@ on:
 
 jobs:
   release:
+    strategy:
+      matrix:
+        os: [linux, darwin, windows]
+    env:
+      GOARCH: amd64
+      GOOS: ${{ matrix.os }}
+    name: release
     runs-on: ubuntu-latest
-
+    outputs:
+      sha_linux: ${{ steps.shasum.outputs.sha_linux }}
     steps:
-      - uses: actions/checkout@v2
-        with:
-          fetch-depth: 0 # See: https://goreleaser.com/ci/actions/
-
-      - uses: actions/setup-go@v2
+      - uses: actions/checkout@main
+      - name: Use Go 1.17
+        uses: actions/setup-go@v2
         with:
           go-version: 1.17
-
-      - uses: goreleaser/goreleaser-action@v2.8.1
-        with:
-          version: latest
-          args: -o tf release --rm-dist
-          workdir: tf
+      - name: Test
+        run: go test
+        working-directory: tf
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GOOS: linux # the tests will only run if the os matches the os of the system of run-on
+      - name: Build
+        run: go build -o tf${{ matrix.os == 'windows' && '.exe' || '' }}
+        working-directory: tf
+        env:
+          GOOS: ${{ matrix.os }}
+      - name: Create release artifacts using .github/build
+        run: .github/build
+        working-directory: tf
+        env:
+          VERSION: ${{ github.ref }}
+      - name: Upload artifacts to release
+        uses: svenstaro/upload-release-action@v2
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: "tf/*{.tar.gz,_checksum.txt}"
+          tag: ${{ github.ref }}
+          overwrite: true
+          file_glob: true
+      - name: Set SHA
+        if: matrix.os == 'darwin' || matrix.os == 'linux'
+        id: shasum
+        run: |
+          echo ::set-output name=sha_${{matrix.os}}::"$(shasum -a 256 *.tar.gz | awk '{printf $1}')"
