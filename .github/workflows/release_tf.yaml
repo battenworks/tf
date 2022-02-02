@@ -44,7 +44,7 @@ jobs:
         env:
           BINARY_DIRECTORY: artifacts
           BINARY_NAME: tf
-          VERSION: ${{ github.ref }}
+          VERSION: 0.0.0
 
       - run: ls -a
       - run: ls -a .github
