@@ -21,7 +21,7 @@ func main() {
 
 		switch command {
 		case "clean":
-			workingDir := getWorkingDirectory()
+			workingDir:= getWorkingDirectory()
 
 			console.Outln("removing terraform cache")
 			err := cleanTerraformCache(workingDir)
@@ -72,11 +72,13 @@ func getWorkingDirectory() string {
 	scope, err := os.Getwd()
 	if err != nil {
 		console.Outln(err.Error())
+		os.Exit(1)
 	}
 
 	workingDir, err := validateWorkingDirectory(scope)
 	if err != nil {
 		console.Outln(err.Error())
+		os.Exit(1)
 	}
 
 	return workingDir
