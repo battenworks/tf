@@ -12,6 +12,7 @@ type Executor interface {
 }
 
 var executor Executor
+var version string = "built from source"
 
 func main() {
 	executor = command.CommandExecutor{}
@@ -20,8 +21,10 @@ func main() {
 		command := os.Args[1]
 
 		switch command {
+		case "version", "-v", "-version", "--version":
+			console.Outln("version: " + version)
 		case "clean":
-			workingDir:= getWorkingDirectory()
+			workingDir := getWorkingDirectory()
 
 			console.Outln("removing terraform cache")
 			err := cleanTerraformCache(workingDir)
@@ -88,13 +91,13 @@ func usage() {
 	console.Whiteln("Wrapper for the Terraform CLI")
 	console.Whiteln("Provides some opinionated commands to help with Terraform CLI use")
 	console.Whiteln("All other commands are passed directly to the Terraform CLI")
+	console.Whiteln("Version: " + version)
 	console.Outln("")
 	console.Whiteln("Usage: tf COMMAND [args]")
 	console.Outln("")
 	console.Whiteln("commands:")
 	console.Yellow("  clean")
 	console.Whiteln(" - wipes terraform cache from current scope, and re-inits")
-	console.Whiteln("    args: -workspace=<workspace to select after initialization>")
 	console.Yellow("  qplan")
 	console.Whiteln(" - calls terraform plan and hides drift output that results from the refresh stage of the plan")
 	console.Yellow("  off")

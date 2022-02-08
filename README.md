@@ -4,34 +4,21 @@ It only works when run in a directory that contains a **backend.tf**.
 If no backend.tf is found, the tool exits.
 
 ## Use tf clean
-To clean and prepare your Terraform working directory for further commands.
+To clean and initialize your Terraform working directory.
 ```
 tf clean
 ```
 - Removes the **.terraform/** directory and **.terraform.lock.hcl** file
-- Initializes Terraform
-- Selects the **default** workspace
+- Runs **terraform init**
 
-You can supply your own workspace with an optional flag.
+## Use tf qplan
+To run a Terraform plan in quiet mode, which removes drift output for clarity.
 ```
-tf clean -workspace=my-workspace
+tf qplan
 ```
-- Removes the **.terraform/** directory and **.terraform.lock.hcl** file
-- Initializes Terraform
-- Selects the user-supplied workspace
+- Runs **terraform plan** and filters the output
 
-## Use tf plan
-To run a Terraform plan, optionally altering the output (with the **-hide-drift** flag) for clarity.
-```
-tf plan
-```
-- Runs **terraform plan** and outputs the results
-
-You can supply the **-hide-drift** flag to suppress Terraform's verbose refresh-step output.
-```
-tf plan -hide-drift
-```
-With the **-hide-drift** flag, your output will resemble the following.
+Your output will resemble the following.
 ```
 Note: Objects have changed outside of Terraform
 
