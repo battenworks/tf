@@ -11,6 +11,7 @@ jobs:
       matrix:
         os: [linux, darwin, windows]
     env:
+      ARTIFACT_DIR: artifacts
       GOARCH: amd64
       GOOS: ${{ matrix.os }}
     name: release
@@ -28,20 +29,16 @@ jobs:
         env:
           GOOS: linux
 
-      - run: go build -ldflags "-X main.version=${{ github.ref }}" -o artifacts/tf${{ matrix.os == 'windows' && '.exe' || '' }}
-        env:
-          GOOS: ${{ matrix.os }}
-
       - run: .github/package-artifacts.sh
         env:
-          ARTIFACT_DIRECTORY: artifacts
           BINARY_NAME: tf
           GITHUB_REF: ${{ github.ref }}
+          GOOS: ${{ matrix.os }}
 
       - uses: svenstaro/upload-release-action@v2
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
-          file: "artifacts/*{.tar.gz,_checksum.txt}"
+          file: "${ARTIFACT_DIR}/*{.tar.gz,_checksum.txt}"
           tag: ${{ github.ref }}
           overwrite: true
           file_glob: true

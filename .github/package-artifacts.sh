@@ -1,16 +1,17 @@
 #!/bin/bash
 set -eux
 
-cd $ARTIFACT_DIRECTORY
-
 VERSION=${GITHUB_REF#"refs/tags/"}
 VERSION=${VERSION#"refs/heads/"}
-NAME="${BINARY_NAME}_${VERSION}_${GOOS}_${GOARCH}"
+ARCHIVE_NAME="${BINARY_NAME}_${VERSION}_${GOOS}_${GOARCH}"
 EXT=''
 
 if [ $GOOS == 'windows' ]; then
   EXT='.exe'
 fi
 
-tar cvfz ${NAME}.tar.gz "${BINARY_NAME}${EXT}"
-md5sum ${NAME}.tar.gz | cut -d ' ' -f 1 > ${NAME}_checksum.txt
+go build -ldflags "-X main.version=${VERSION}" -o ${ARTIFACT_DIR}/${BINARY_NAME}${EXT}
+
+cd ${ARTIFACT_DIR}
+tar cvfz ${ARCHIVE_NAME}.tar.gz "${BINARY_NAME}${EXT}"
+md5sum ${ARCHIVE_NAME}.tar.gz | cut -d ' ' -f 1 > ${ARCHIVE_NAME}_checksum.txt
