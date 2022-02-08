@@ -1,7 +1,6 @@
 package main
 
 import (
-	"flag"
 	"os"
 
 	"github.com/battenworks/go-common/command"
@@ -20,15 +19,8 @@ func main() {
 	if len(os.Args) > 1 {
 		command := os.Args[1]
 
-		cleanFlags := flag.NewFlagSet("clean", flag.ExitOnError)
-		workspace := cleanFlags.String("workspace", "default", "Set the Terraform workspace to init and use")
-
-		planFlags := flag.NewFlagSet("plan", flag.ExitOnError)
-		hideDrift := planFlags.Bool("hide-drift", false, "Hide Terraform's verbose drift output")
-
 		switch command {
 		case "clean":
-			cleanFlags.Parse(os.Args[2:])
 			workingDir := getWorkingDirectory()
 
 			console.Outln("removing terraform cache")
@@ -45,18 +37,9 @@ func main() {
 			if err != nil {
 				break
 			}
+		case "qplan":
+			result := quietPlan(executor)
 
-			err = selectWorkspace(executor, *workspace)
-			console.Outln("")
-			if err != nil {
-				console.Outln(err.Error())
-				break
-			}
-			console.Out("workspace: ")
-			console.WhitelnBold(*workspace)
-		case "plan":
-			planFlags.Parse(os.Args[2:])
-			result := plan(executor, *hideDrift)
 			console.Out(result)
 		case "off":
 			workingDir := getWorkingDirectory()
@@ -110,9 +93,8 @@ func usage() {
 	console.Yellow("  clean")
 	console.Whiteln(" - wipes terraform cache from current scope, and re-inits")
 	console.Whiteln("    args: -workspace=<workspace to select after initialization>")
-	console.Yellow("  plan")
-	console.Whiteln(" - calls terraform plan with an optional arg to hide drift output")
-	console.Whiteln("    args: -hide-drift")
+	console.Yellow("  qplan")
+	console.Whiteln(" - calls terraform plan and hides drift output that results from the refresh stage of the plan")
 	console.Yellow("  off")
 	console.Whiteln(" - adds the '.off' extension to all config files in the working directory")
 	console.Yellow("  on")
