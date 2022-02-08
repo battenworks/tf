@@ -19,13 +19,16 @@ func main() {
 
 	if len(os.Args) > 1 {
 		command := os.Args[1]
-		flags := flag.NewFlagSet("", flag.ExitOnError)
-		workspace := flags.String("workspace", "default", "Set the Terraform workspace to init and use")
-		hideDrift := flags.Bool("hide-drift", false, "Hide Terraform's verbose drift output")
-		flags.Parse(os.Args[2:])
+
+		cleanFlags := flag.NewFlagSet("clean", flag.ExitOnError)
+		workspace := cleanFlags.String("workspace", "default", "Set the Terraform workspace to init and use")
+
+		planFlags := flag.NewFlagSet("plan", flag.ExitOnError)
+		hideDrift := planFlags.Bool("hide-drift", false, "Hide Terraform's verbose drift output")
 
 		switch command {
 		case "clean":
+			cleanFlags.Parse(os.Args[2:])
 			workingDir := getWorkingDirectory()
 
 			console.Outln("removing terraform cache")
@@ -52,6 +55,7 @@ func main() {
 			console.Out("workspace: ")
 			console.WhitelnBold(*workspace)
 		case "plan":
+			planFlags.Parse(os.Args[2:])
 			result := plan(executor, *hideDrift)
 			console.Out(result)
 		case "off":
