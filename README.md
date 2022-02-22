@@ -1,5 +1,7 @@
 # tf
-This tool wraps Terraform to provide additional functionality.
+Wrapper for the Terraform CLI.
+Provides some opinionated commands to help with Terraform CLI use.
+All other commands are passed directly to the Terraform CLI.
 It only works when run in a directory that contains a **backend.tf**.
 If no backend.tf is found, the tool exits.
 
@@ -46,8 +48,3 @@ Used in conjunction with **tf off**.
 tf on
 ```
 - Removes the **.off** extension from all config files in the current directory.
-
-## Build from source
-```
-go build -o <some place on your path>/tf
-```
