@@ -14,4 +14,4 @@ go build -ldflags "-X main.version=${VERSION}" -o ${ARTIFACT_DIR}/${BINARY_NAME}
 
 cd ${ARTIFACT_DIR}
 tar cvfz ${ARCHIVE_NAME}.tar.gz "${BINARY_NAME}${EXT}"
-md5sum ${ARCHIVE_NAME}.tar.gz | cut -d ' ' -f 1 > ${ARCHIVE_NAME}_checksum.txt
+sha256sum ${ARCHIVE_NAME}.tar.gz > ${ARCHIVE_NAME}.sha256
