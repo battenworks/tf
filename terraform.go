@@ -115,7 +115,7 @@ func off(dir string) error {
 }
 
 func canTurnFileOff(file string) bool {
-	return file != "backend.tf" && filepath.Ext(file) == ".tf"
+	return file != "backend.tf" && file != "providers.tf" && filepath.Ext(file) == ".tf"
 }
 
 func on(dir string) error {

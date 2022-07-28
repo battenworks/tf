@@ -84,6 +84,10 @@ func TestCanTurnFileOff(t *testing.T) {
 		file := "backend.tf"
 		assert.False(t, canTurnFileOff(file), "should NOT be able to turn %s off", file)
 	})
+	t.Run("returns false for providers file", func(t *testing.T) {
+		file := "providers.tf"
+		assert.False(t, canTurnFileOff(file), "should NOT be able to turn %s off", file)
+	})
 	t.Run("returns false for lock file", func(t *testing.T) {
 		file := ".terraform.locl.hcl"
 		assert.False(t, canTurnFileOff(file), "should NOT be able to turn %s off", file)
