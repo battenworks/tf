@@ -33,18 +33,18 @@ Your configuration already matches the changes detected above. If you'd like to 
 
 ## Use tf off
 For rapid development of Terraform config.
-This command modifies all config files but **backend.tf**, so the next **apply** will tear down the resources.
+This command modifies config files but **backend.tf** and **providers.tf**, so the next **apply** will tear down the resources.
 Used in conjunction with **tf on**.
 ```
 tf off
 ```
-- Adds the **.off** extension to all config files in the current directory (with the exception of **backend.tf**).
+- Adds the **.off** extension to config files in the current directory (with the exception of **backend.tf** and **providers.tf**).
 
 ## Use tf on
 For rapid development of Terraform config.
-This command modifies all config files so the next **apply** will stand up the resources.
+This command modifies config files so the next **apply** will stand up the resources.
 Used in conjunction with **tf off**.
 ```
 tf on
 ```
-- Removes the **.off** extension from all config files in the current directory.
+- Removes the **.off** extension from config files in the current directory.
