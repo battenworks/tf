@@ -2,83 +2,111 @@ package main
 
 import (
 	"os"
+	"strings"
 
-	"github.com/battenworks/go-common/command"
-	"github.com/battenworks/go-common/console"
+	"github.com/battenworks/go-common/v2/console"
+	"github.com/battenworks/tf/v2/tfcmd"
 )
 
-type Executor interface {
-	Execute(cmdName string, cmdArgs ...string) ([]byte, error)
-}
-
-var executor Executor
 var version string = "built from source"
 
 func main() {
-	executor = command.CommandExecutor{}
+	readable_version := "Version: " + strings.Replace(version, "v", "", -1)
 
 	if len(os.Args) > 1 {
-		command := os.Args[1]
+		cmd := os.Args[1]
 
-		switch command {
+		switch cmd {
 		case "version", "-v", "-version", "--version":
-			console.Outln("version: " + version)
+			console.Outln(readable_version)
 		case "clean":
 			workingDir := getWorkingDirectory()
 
-			console.Outln("removing terraform cache")
-			err := cleanTerraformCache(workingDir)
+			err := tfcmd.ValidateWorkingDirectory(workingDir)
 			if err != nil {
 				console.Outln(err.Error())
-				break
+				os.Exit(1)
 			}
-			console.Greenln("terraform cache removed")
 
-			console.Outln("initializing terraform")
-			initResult, err := initializeTerraform(executor)
-			console.Out(initResult)
+			console.Outln("removing terraform cache")
+			err = tfcmd.CleanTerraformCache(workingDir)
 			if err != nil {
-				break
+				os.Exit(1)
 			}
-		case "qplan":
-			result := quietPlan(executor)
 
-			console.Out(result)
+			console.Greenln("terraform cache removed")
+			console.Outln("initializing terraform")
+			err = tfcmd.PassThrough([]string{"init"})
+			if err != nil {
+				os.Exit(1)
+			}
+		case "wipe":
+			workingDir := getWorkingDirectory()
+
+			console.Outln("removing terraform cache")
+			err := tfcmd.CleanTerraformCache(workingDir)
+			if err != nil {
+				os.Exit(1)
+			}
+
+			console.Greenln("terraform cache removed")
 		case "off":
 			workingDir := getWorkingDirectory()
 
-			err := off(workingDir)
+			err := tfcmd.ValidateWorkingDirectory(workingDir)
 			if err != nil {
 				console.Outln(err.Error())
-				break
+				os.Exit(1)
+			}
+
+			err = tfcmd.Off(workingDir)
+			if err != nil {
+				os.Exit(1)
 			}
 		case "on":
 			workingDir := getWorkingDirectory()
 
-			err := on(workingDir)
+			err := tfcmd.ValidateWorkingDirectory(workingDir)
 			if err != nil {
 				console.Outln(err.Error())
-				break
+				os.Exit(1)
+			}
+
+			err = tfcmd.On(workingDir)
+			if err != nil {
+				os.Exit(1)
+			}
+		case "test":
+			console.Outln("fmt > init > upgrade")
+			err := tfcmd.PassThrough([]string{"fmt", "-recursive"})
+			if err != nil {
+				os.Exit(1)
+			}
+
+			err = tfcmd.PassThrough([]string{"init", "-upgrade"})
+			if err != nil {
+				os.Exit(1)
+			}
+			
+			err = tfcmd.PassThrough([]string{"test"})
+			if err != nil {
+				os.Exit(1)
 			}
 		case "help", "-help", "--help":
-			usage()
+			usage(readable_version)
 		default:
-			result, _ := passThrough(executor, os.Args[1:])
-			console.Out(result)
+			err := tfcmd.PassThrough(os.Args[1:])
+			if err != nil {
+				os.Exit(1)
+			}
 		}
 	} else {
-		usage()
+		usage(readable_version)
 	}
 }
 
 func getWorkingDirectory() string {
-	scope, err := os.Getwd()
-	if err != nil {
-		console.Outln(err.Error())
-		os.Exit(1)
-	}
-
-	workingDir, err := validateWorkingDirectory(scope)
+	workingDir, err := os.Getwd()
 	if err != nil {
 		console.Outln(err.Error())
 		os.Exit(1)
@@ -87,24 +115,26 @@ func getWorkingDirectory() string {
 	return workingDir
 }
 
-func usage() {
+func usage(readable_version string) {
 	console.Whiteln("Wrapper for the Terraform CLI")
 	console.Whiteln("Provides some opinionated commands to help with Terraform CLI use")
 	console.Whiteln("All other commands are passed directly to the Terraform CLI")
 	console.Outln("")
-	console.Whiteln("Version: " + version)
+	console.Whiteln(readable_version)
 	console.Outln("")
 	console.Whiteln("Usage: tf COMMAND")
 	console.Outln("")
 	console.Whiteln("commands:")
-	console.Yellow("  clean")
-	console.Whiteln("\t- Removes, then re-initializes, the Terraform cache of the current scope")
-	console.Yellow("  qplan")
-	console.Whiteln("\t- Calls terraform plan and hides drift output that results from the refresh stage of the plan")
-	console.Yellow("  off")
+	console.Yellow("clean")
+	console.Whiteln("\t- Removes the Terraform cache and lock file from the current scope, then runs 'init'")
+	console.Yellow("test")
+	console.Whiteln("\t- Runs 'fmt -recursive', then 'init -upgrade', then 'test'")
+	console.Yellow("wipe")
+	console.Whiteln("\t- Removes the Terraform cache and lock file from the current scope")
+	console.Yellow("off")
 	console.Whiteln("\t- Adds the '.off' extension to all config files in the working directory")
 	console.Whiteln("\t  Useful for preparing to destroy all resources in the current scope")
-	console.Yellow("  on")
+	console.Yellow("on")
 	console.Whiteln("\t- Removes the '.off' extension from all config files in the working directory")
 	console.Whiteln("\t  Useful for preparing to re-create all resources in the current scope")
 }
