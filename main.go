@@ -40,6 +40,24 @@ func main() {
 			if err != nil {
 				os.Exit(1)
 			}
+		case "replan":
+			workingDir := getWorkingDirectory()
+
+			err := tfcmd.ValidateWorkingDirectory(workingDir)
+			if err != nil {
+				console.Outln(err.Error())
+				os.Exit(1)
+			}
+
+			err = tfcmd.PassThrough([]string{"init", "-upgrade"})
+			if err != nil {
+				os.Exit(1)
+			}
+
+			err = tfcmd.PassThrough([]string{"plan"})
+			if err != nil {
+				os.Exit(1)
+			}
 		case "wipe":
 			workingDir := getWorkingDirectory()
 
@@ -87,7 +105,7 @@ func main() {
 			if err != nil {
 				os.Exit(1)
 			}
-			
+
 			err = tfcmd.PassThrough([]string{"test"})
 			if err != nil {
 				os.Exit(1)
@@ -127,6 +145,8 @@ func usage(readable_version string) {
 	console.Whiteln("commands:")
 	console.Yellow("clean")
 	console.Whiteln("\t- Removes the Terraform cache and lock file from the current scope, then runs 'init'")
+	console.Yellow("replan")
+	console.Whiteln("\t- Runs 'init -upgrade', then 'plan'")
 	console.Yellow("test")
 	console.Whiteln("\t- Runs 'fmt -recursive', then 'init -upgrade', then 'test'")
 	console.Yellow("wipe")
