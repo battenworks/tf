@@ -17,8 +17,6 @@ func main() {
 		cmd := os.Args[1]
 
 		switch cmd {
-		case "version", "-v", "-version", "--version":
-			console.Outln(readable_version)
 		case "clean":
 			workingDir := getWorkingDirectory()
 
@@ -40,34 +38,6 @@ func main() {
 			if err != nil {
 				os.Exit(1)
 			}
-		case "replan":
-			workingDir := getWorkingDirectory()
-
-			err := tfcmd.ValidateWorkingDirectory(workingDir)
-			if err != nil {
-				console.Outln(err.Error())
-				os.Exit(1)
-			}
-
-			err = tfcmd.PassThrough([]string{"init", "-upgrade"})
-			if err != nil {
-				os.Exit(1)
-			}
-
-			err = tfcmd.PassThrough([]string{"plan"})
-			if err != nil {
-				os.Exit(1)
-			}
-		case "wipe":
-			workingDir := getWorkingDirectory()
-
-			console.Outln("removing terraform cache")
-			err := tfcmd.CleanTerraformCache(workingDir)
-			if err != nil {
-				os.Exit(1)
-			}
-
-			console.Greenln("terraform cache removed")
 		case "off":
 			workingDir := getWorkingDirectory()
 
@@ -94,6 +64,24 @@ func main() {
 			if err != nil {
 				os.Exit(1)
 			}
+		case "replan":
+			workingDir := getWorkingDirectory()
+
+			err := tfcmd.ValidateWorkingDirectory(workingDir)
+			if err != nil {
+				console.Outln(err.Error())
+				os.Exit(1)
+			}
+
+			err = tfcmd.PassThrough([]string{"init", "-upgrade"})
+			if err != nil {
+				os.Exit(1)
+			}
+
+			err = tfcmd.PassThrough([]string{"plan"})
+			if err != nil {
+				os.Exit(1)
+			}
 		case "test":
 			console.Outln("fmt > init > upgrade")
 			err := tfcmd.PassThrough([]string{"fmt", "-recursive"})
@@ -110,6 +98,8 @@ func main() {
 			if err != nil {
 				os.Exit(1)
 			}
+		case "version", "-v", "-version", "--version":
+			console.Outln(readable_version)
 		case "help", "-help", "--help":
 			usage(readable_version)
 		default:
@@ -145,16 +135,14 @@ func usage(readable_version string) {
 	console.Whiteln("commands:")
 	console.Yellow("clean")
 	console.Whiteln("\t- Removes the Terraform cache and lock file from the current scope, then runs 'init'")
-	console.Yellow("replan")
-	console.Whiteln("\t- Runs 'init -upgrade', then 'plan'")
-	console.Yellow("test")
-	console.Whiteln("\t- Runs 'fmt -recursive', then 'init -upgrade', then 'test'")
-	console.Yellow("wipe")
-	console.Whiteln("\t- Removes the Terraform cache and lock file from the current scope")
 	console.Yellow("off")
 	console.Whiteln("\t- Adds the '.off' extension to all config files in the working directory")
 	console.Whiteln("\t  Useful for preparing to destroy all resources in the current scope")
 	console.Yellow("on")
 	console.Whiteln("\t- Removes the '.off' extension from all config files in the working directory")
 	console.Whiteln("\t  Useful for preparing to re-create all resources in the current scope")
+	console.Yellow("replan")
+	console.Whiteln("\t- Runs 'init -upgrade', then 'plan'")
+	console.Yellow("test")
+	console.Whiteln("\t- Runs 'fmt -recursive', then 'init -upgrade', then 'test'")
 }
