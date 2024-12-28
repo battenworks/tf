@@ -5,7 +5,7 @@ import (
 	"os"
 	"testing"
 
-	"github.com/battenworks/go-common/v2/assert"
+	"github.com/battenworks/go-common/v3/assert"
 	"github.com/battenworks/tf/v2/tfcmd"
 )
 

@@ -4,7 +4,7 @@ import (
 	"os"
 	"strings"
 
-	"github.com/battenworks/go-common/v2/console"
+	"github.com/battenworks/go-common/v3/console"
 	"github.com/battenworks/tf/v2/tfcmd"
 )
 
