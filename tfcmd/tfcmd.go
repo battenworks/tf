@@ -69,7 +69,11 @@ func Off(dir string) error {
 
 // CanTurnFileOff determines whether or not a file can have the "off" file extension.
 func CanTurnFileOff(file string) bool {
-	return file != "backend.tf" && file != "providers.tf" && filepath.Ext(file) == ".tf"
+	return file != "backend.tf" &&
+		file != "backend_override.tf" &&
+		file != "providers.tf" &&
+		file != "variables.tf" &&
+		filepath.Ext(file) == ".tf"
 }
 
 // On removes the file extensions that makes Terraform ignore config files,

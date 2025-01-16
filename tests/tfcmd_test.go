@@ -37,8 +37,16 @@ func TestCanTurnFileOff(t *testing.T) {
 		file := "backend.tf"
 		assert.False(t, tfcmd.CanTurnFileOff(file), "should NOT be able to turn %s off", file)
 	})
+	t.Run("returns false for backend override file", func(t *testing.T) {
+		file := "backend_override.tf"
+		assert.False(t, tfcmd.CanTurnFileOff(file), "should NOT be able to turn %s off", file)
+	})
 	t.Run("returns false for providers file", func(t *testing.T) {
 		file := "providers.tf"
+		assert.False(t, tfcmd.CanTurnFileOff(file), "should NOT be able to turn %s off", file)
+	})
+	t.Run("returns false for variables file", func(t *testing.T) {
+		file := "variables.tf"
 		assert.False(t, tfcmd.CanTurnFileOff(file), "should NOT be able to turn %s off", file)
 	})
 	t.Run("returns false for lock file", func(t *testing.T) {
