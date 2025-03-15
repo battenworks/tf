@@ -12,9 +12,9 @@ import (
 func TestValidateWorkingDirectory(t *testing.T) {
 	t.Run("succeeds when directory is valid", func(t *testing.T) {
 		currentDir, _ := os.Getwd()
-		backendFile := currentDir + "/backend.tf"
-		os.Create(backendFile)
-		defer os.Remove(backendFile)
+		providersFile := currentDir + "/providers.tf"
+		os.Create(providersFile)
+		defer os.Remove(providersFile)
 
 		err := tfcmd.ValidateWorkingDirectory(currentDir)
 
@@ -23,8 +23,8 @@ func TestValidateWorkingDirectory(t *testing.T) {
 
 	t.Run("fails when directory is invalid", func(t *testing.T) {
 		currentDir, _ := os.Getwd()
-		backendFile := currentDir + "/backend.tf"
-		os.Remove(backendFile)
+		providersFile := currentDir + "/providers.tf"
+		os.Remove(providersFile)
 
 		err := tfcmd.ValidateWorkingDirectory(currentDir)
 

@@ -26,14 +26,14 @@ func main() {
 				os.Exit(1)
 			}
 
-			console.Outln("removing terraform cache")
-			err = tfcmd.CleanTerraformCache(workingDir)
+			console.Outln("removing tofu cache")
+			err = tfcmd.CleanCache(workingDir)
 			if err != nil {
 				os.Exit(1)
 			}
 
-			console.Greenln("terraform cache removed")
-			console.Outln("initializing terraform")
+			console.Greenln("tofu cache removed")
+			console.Outln("initializing tofu")
 			err = tfcmd.PassThrough([]string{"init"})
 			if err != nil {
 				os.Exit(1)
@@ -124,9 +124,9 @@ func getWorkingDirectory() string {
 }
 
 func usage(readable_version string) {
-	console.Whiteln("Wrapper for the Terraform CLI")
-	console.Whiteln("Provides some opinionated commands to help with Terraform CLI use")
-	console.Whiteln("All other commands are passed directly to the Terraform CLI")
+	console.Whiteln("Wrapper for the OpenTofu CLI")
+	console.Whiteln("Provides some opinionated commands to help with CLI use")
+	console.Whiteln("All other commands are passed directly to the CLI")
 	console.Outln("")
 	console.Whiteln(readable_version)
 	console.Outln("")
@@ -134,7 +134,7 @@ func usage(readable_version string) {
 	console.Outln("")
 	console.Whiteln("commands:")
 	console.Yellow("clean")
-	console.Whiteln("\t- Removes the Terraform cache and lock file from the current scope, then runs 'init'")
+	console.Whiteln("\t- Removes the cache and lock file from the current scope, then runs 'init'")
 	console.Yellow("off")
 	console.Whiteln("\t- Adds the '.off' extension to all config files in the working directory")
 	console.Whiteln("\t  Useful for preparing to destroy all resources in the current scope")

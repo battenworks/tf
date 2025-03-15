@@ -9,25 +9,25 @@ import (
 	"path/filepath"
 )
 
-const cmdName = "terraform"
+const cmdName = "tofu"
 
 // ErrInvalidWorkingDirectory error constant.
-var ErrInvalidWorkingDirectory = errors.New("invalid working directory: no backend.tf found")
+var ErrInvalidWorkingDirectory = errors.New("invalid working directory: no providers.tf found")
 
 // OffFileExtension is the file extension used to turn .tf files off and on.
 var OffFileExtension = ".off"
 
 // ValidateWorkingDirectory determines if the supplied directory can be manipulated by this app.
 func ValidateWorkingDirectory(dir string) error {
-	if _, err := os.Stat(dir + "/backend.tf"); errors.Is(err, os.ErrNotExist) {
+	if _, err := os.Stat(dir + "/providers.tf"); errors.Is(err, os.ErrNotExist) {
 		return ErrInvalidWorkingDirectory
 	}
 
 	return nil
 }
 
-// CleanTerraformCache removes module cache and lock files from the supplied directory.
-func CleanTerraformCache(dir string) error {
+// CleanCache removes module cache and lock files from the supplied directory.
+func CleanCache(dir string) error {
 	err := os.RemoveAll(dir + "/.terraform")
 	if err != nil {
 		return err
@@ -45,8 +45,8 @@ func CleanTerraformCache(dir string) error {
 	return nil
 }
 
-// Off adds a file extension to select Terraform config files,
-// effectively turning them off for subsequent Terraform operations.
+// Off adds a file extension to select config files,
+// effectively turning them off for subsequent CLI operations.
 func Off(dir string) error {
 	files, err := os.ReadDir(dir)
 	if err != nil {
@@ -76,8 +76,8 @@ func CanTurnFileOff(file string) bool {
 		filepath.Ext(file) == ".tf"
 }
 
-// On removes the file extensions that makes Terraform ignore config files,
-// effectively turning them on for subsequent Terraform operations.
+// On removes the file extensions that makes the CLI ignore config files,
+// effectively turning them on for subsequent CLI operations.
 func On(dir string) error {
 	files, err := os.ReadDir(dir)
 	if err != nil {
@@ -103,7 +103,7 @@ func CanTurnFileOn(file string) bool {
 	return filepath.Ext(file) == OffFileExtension
 }
 
-// PassThrough simply passes the commands to the Terraform binary, unmodified.
+// PassThrough simply passes the commands to the CLI, unmodified.
 func PassThrough(cmdArgs []string) error {
 	cmd := exec.Command(cmdName, cmdArgs...)
 
